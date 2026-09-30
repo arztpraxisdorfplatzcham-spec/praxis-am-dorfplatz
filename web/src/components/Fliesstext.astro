@@ -1,0 +1,64 @@
+---
+/**
+ * Gibt einen Text aus der Verwaltung aus und versteht dabei zwei Zeichen,
+ * die eine Redakteurin ohne Erklaerung tippen kann:
+ *
+ *   **fett**   hebt einzelne Woerter hervor
+ *   |          erzeugt einen Zeilenumbruch
+ *
+ * Bewusst kein voller Rich-Text-Editor: der Fliesstext dieser Seite braucht
+ * nicht mehr, und je weniger Formatierung moeglich ist, desto schwerer laesst
+ * sich die Gestaltung versehentlich zerlegen.
+ */
+interface Props {
+  text: string
+  /** Wandelt Telefonnummern in anklickbare Links. Nur dort einschalten, wo
+   *  im Text tatsaechlich Nummern stehen — sonst koennten Jahreszahlen oder
+   *  Fristen faelschlich als Nummer gelesen werden. */
+  telefonnummern?: boolean
+}
+const {text, telefonnummern = false} = Astro.props
+
+/** Schweizer Schreibweisen: 144, 041 780 09 45, 0900 008 008 */
+const NUMMER = /\b(1\d{2}|0\d{2}\s\d{3}\s\d{2}\s\d{2}|0\d{3}\s\d{3}\s\d{3})\b/g
+const telHref = (n: string) => {
+  const z = n.replace(/\D/g, '')
+  if (z.length <= 3) return z
+  return z.startsWith('0') ? `+41${z.slice(1)}` : `+${z}`
+}
+
+const zeilen = text.split('|').map((zeile) =>
+  zeile
+    .trim()
+    .split(/(\*\*[^*]+\*\*)/)
+    .filter(Boolean)
+    .flatMap((stueck) => {
+      const fett = stueck.startsWith('**') && stueck.endsWith('**')
+      const inhalt = fett ? stueck.slice(2, -2) : stueck
+      if (!telefonnummern) return [{inhalt, fett, nummer: false}]
+      return inhalt
+        .split(NUMMER)
+        .filter(Boolean)
+        .map((teil) => ({inhalt: teil, fett, nummer: new RegExp(`^${NUMMER.source}$`).test(teil)}))
+    }),
+)
+---
+
+{
+  zeilen.map((stuecke, zeile) => (
+    <Fragment>
+      {zeile > 0 && <br />}
+      {stuecke.map((s) =>
+        s.nummer ? (
+          <a class="text-brand font-semibold hover:text-brand-light" href={`tel:${telHref(s.inhalt)}`}>
+            {s.inhalt}
+          </a>
+        ) : s.fett ? (
+          <strong class="font-semibold">{s.inhalt}</strong>
+        ) : (
+          <Fragment>{s.inhalt}</Fragment>
+        ),
+      )}
+    </Fragment>
+  ))
+}

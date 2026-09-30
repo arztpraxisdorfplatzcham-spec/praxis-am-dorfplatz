@@ -1,0 +1,176 @@
+---
+import Basis from '../layouts/Basis.astro'
+import {ladePraxisDaten} from '../lib/sanity'
+
+const d = await ladePraxisDaten()
+---
+
+<Basis titel={`Datenschutzerklärung — ${d.praxisName.replace("|", " ")}`} telefon={d.telefon} basis="/"
+  daten={d}>
+<section class="band bg-page-cream">
+<div class="shell">
+<div class="max-w-3xl">
+
+<h1 class="font-serif text-brand text-4xl md:text-5xl mb-4 leading-tight">Datenschutzerklärung</h1>
+<p class="font-sans text-gray-600 mb-10">
+Diese Erklärung beschreibt, wie wir Personendaten bearbeiten – einerseits beim Besuch dieser
+Website, andererseits im Rahmen der ärztlichen Behandlung. Es gilt das schweizerische
+Datenschutzgesetz (DSG) in der seit dem 1. September 2023 geltenden Fassung.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Verantwortliche Stelle</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+{d.praxisName}, {d.arztName}, {d.strasse}, {d.plzOrt},
+Telefon {d.telefon}. Fragen zum Datenschutz richten Sie bitte an das Praxisteam.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Bearbeitung beim Besuch dieser Website</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Beim Aufruf der Website übermittelt Ihr Browser technisch notwendige Angaben an den Server,
+die dort in Protokolldateien gespeichert werden:
+</p>
+<ul class="font-sans text-gray-700 leading-relaxed mb-4 list-disc pl-5 space-y-2">
+<li>gekürzte IP-Adresse des anfragenden Geräts</li>
+<li>Datum und Uhrzeit des Zugriffs</li>
+<li>Name und Adresse der abgerufenen Seite</li>
+<li>Browsertyp und Betriebssystem</li>
+</ul>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Diese Daten dienen ausschliesslich dem sicheren Betrieb der Website und der Abwehr von
+Missbrauch. Sie werden nicht mit anderen Datenquellen zusammengeführt, nicht für
+Auswertungen über einzelne Personen verwendet und nach kurzer Zeit gelöscht.
+Die Website wird bei der Netlify, Inc., 512 2nd Street, San Francisco, USA, betrieben;
+die Protokolldaten fallen dort an.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Keine Cookies, keine Analyse, keine Werbung</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Diese Website setzt <span class="font-semibold">keine Cookies</span> und
+verwendet <span class="font-semibold">keine Analyse- oder Werkzeuge zur
+Reichweitenmessung</span>.
+Es findet kein Tracking statt, und es werden keine Profile gebildet. Die Schriften werden
+von unserem eigenen Server geladen. Ausnahmen sind die Bilder und die eingebettete Karte
+im Abschnitt «Kontakt &amp; Anfahrt» – dazu die nächsten beiden Abschnitte.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Bilder (Sanity)</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Die Inhalte dieser Website werden mit dem Content-Management-System Sanity der Sanity Inc.,
+USA, gepflegt. Die Bilder (Fotos der Praxis und des Teams) werden direkt aus dessen
+Auslieferungsnetz (CDN) geladen. Dabei übermittelt Ihr Browser technisch bedingt
+Ihre <span class="font-semibold">IP-Adresse</span> sowie Angaben zu Browser und Gerät an
+Sanity bzw. deren CDN-Dienstleister, damit die Bilder ausgeliefert werden können. Es werden
+dabei keine Cookies gesetzt. Wie Sanity Daten bearbeitet, steht
+unter <a class="text-brand underline hover:text-brand-light" href="https://www.sanity.io/legal/privacy" target="_blank" rel="noopener noreferrer">sanity.io/legal/privacy</a>.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Eingebettete Karte (Google Maps)</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Im Abschnitt «Kontakt &amp; Anfahrt» ist eine Karte des Dienstes Google Maps eingebettet.
+Anbieterin ist die Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland;
+Daten können dabei auch an die Google LLC in den Vereinigten Staaten übermittelt werden.
+</p>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Die Karte wird erst geladen, wenn Sie so weit nach unten scrollen, dass sie in den Blick
+kommt. Beim Laden übermittelt Ihr Browser unter anderem
+Ihre <span class="font-semibold">IP-Adresse</span>, Angaben zu Ihrem Gerät und zum verwendeten
+Browser sowie die aufgerufene Seite an Google. Darauf haben wir keinen Einfluss. Sind Sie
+zu diesem Zeitpunkt bei einem Google-Konto angemeldet, kann Google den Aufruf diesem Konto
+zuordnen; melden Sie sich vorher ab, wenn Sie das nicht möchten.
+</p>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Wir setzen die Karte ein, damit Sie die Praxis leichter finden – das ist unser berechtigtes
+Interesse an einer verständlichen Anfahrtsbeschreibung. Wie Google die Daten bearbeitet,
+steht in der Datenschutzerklärung von Google
+unter <a class="text-brand underline hover:text-brand-light" href="https://policies.google.com/privacy?hl=de" target="_blank" rel="noopener noreferrer">policies.google.com/privacy</a>.
+Wenn Sie die Übermittlung vermeiden möchten, rufen Sie den Abschnitt «Kontakt &amp; Anfahrt»
+nicht auf; die vollständige Adresse finden Sie auch im Text daneben und im Impressum.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Links zu anderen Websites</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Die Seite enthält Verweise auf externe Angebote, insbesondere die Schaltfläche
+«Route in Google Maps öffnen» sowie die Telefonnummern von Kliniken und Notfalldiensten.
+Erst wenn Sie einen solchen Link anklicken, werden Daten an die jeweilige Anbieterin
+übertragen.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Kontaktaufnahme</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Diese Website enthält <span class="font-semibold">kein Kontaktformular</span>. Termine und
+Anliegen besprechen Sie telefonisch unter {d.telefon}.
+</p>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Für vertrauliche medizinische Anliegen steht Ihnen die HIN-Adresse {d.hinMail} zur
+Verfügung; die Übermittlung ist dort
+verschlüsselt. <span class="font-semibold">Bitte senden Sie keine Angaben zu Ihrer Gesundheit über
+gewöhnliche, unverschlüsselte E-Mail</span> – diese kann auf dem Weg mitgelesen werden.
+Erhalten wir dennoch solche Nachrichten, behandeln wir sie vertraulich wie alle
+Patientendaten.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Patienteninformation zum Umgang mit Personendaten</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Der folgende Abschnitt betrifft nicht die Website, sondern die Behandlung in der Praxis.
+</p>
+
+<h3 class="font-serif text-brand text-xl mt-8 mb-2">Erhebung und Zweck</h3>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Wir bearbeiten Ihre Personendaten, insbesondere Angaben zu Ihrer Gesundheit, soweit dies
+für Diagnose, Behandlung, Betreuung, Abrechnung und die gesetzlich vorgeschriebene
+Dokumentation erforderlich ist. Grundlage sind der Behandlungsvertrag mit Ihnen sowie
+gesetzliche Pflichten.
+</p>
+
+<h3 class="font-serif text-brand text-xl mt-8 mb-2">Aufbewahrung</h3>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Die Krankengeschichte wird während der gesetzlich vorgeschriebenen Dauer aufbewahrt
+und anschliessend datenschutzkonform vernichtet.
+</p>
+
+<h3 class="font-serif text-brand text-xl mt-8 mb-2">Weitergabe</h3>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Eine Weitergabe erfolgt nur, soweit Sie eingewilligt haben, das Gesetz es vorsieht oder es
+für Ihre Behandlung notwendig ist – etwa an mit- oder weiterbehandelnde Ärztinnen und
+Ärzte, Labors, Spitäler, Ihren Krankenversicherer im Rahmen der Abrechnung oder an
+beauftragte Dienstleister, die ihrerseits zur Vertraulichkeit verpflichtet sind.
+Das Arztgeheimnis nach Artikel 321 des Strafgesetzbuches bleibt in jedem Fall gewahrt.
+</p>
+
+<h3 class="font-serif text-brand text-xl mt-8 mb-2">Praxisübernahme per 1. September 2026</h3>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Ihre Krankengeschichte verbleibt in der Praxis und wird von {d.arztName}
+nahtlos weitergeführt – unter Wahrung des Arztgeheimnisses und des Datenschutzes.
+Sind Sie mit dieser Übergabe nicht einverstanden oder möchten Sie Ihre Unterlagen an
+eine andere Ärztin oder einen anderen Arzt übertragen lassen, melden Sie sich bitte
+beim Praxisteam.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Ihre Rechte</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">Sie haben im Rahmen des schweizerischen Datenschutzgesetzes das Recht:</p>
+<ul class="font-sans text-gray-700 leading-relaxed mb-4 list-disc pl-5 space-y-2">
+<li>Auskunft darüber zu verlangen, welche Daten wir über Sie bearbeiten</li>
+<li>unrichtige Daten berichtigen zu lassen</li>
+<li>eine Kopie Ihrer Daten zu erhalten oder deren Herausgabe zu verlangen</li>
+<li>eine erteilte Einwilligung jederzeit zu widerrufen</li>
+<li>die Löschung von Daten zu verlangen, soweit keine gesetzliche Aufbewahrungspflicht entgegensteht</li>
+</ul>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Wenden Sie sich dafür an das Praxisteam. Zum Schutz Ihrer Daten müssen wir Ihre
+Identität prüfen, bevor wir Auskunft erteilen. Sind Sie mit unserer Antwort nicht
+einverstanden, können Sie sich an den Eidgenössischen Datenschutz- und
+Öffentlichkeitsbeauftragten (EDÖB) wenden.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Änderungen</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Wir können diese Datenschutzerklärung jederzeit anpassen. Massgebend ist die jeweils
+auf dieser Seite veröffentlichte Fassung.
+</p>
+
+<p class="font-sans text-sm text-gray-600 mt-12 pt-6 border-t border-border-tan">Stand: 30.09.2026</p>
+
+</div>
+</div>
+</section>
+</Basis>

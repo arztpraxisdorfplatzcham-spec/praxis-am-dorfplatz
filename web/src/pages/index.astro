@@ -1,0 +1,19 @@
+---
+import Basis from '../layouts/Basis.astro'
+import Startseite from '../components/Startseite.astro'
+import {ladePraxisDaten, t} from '../lib/sanity'
+
+const d = await ladePraxisDaten()
+---
+
+<Basis
+  titel={t(d.seoTitel) || `${d.praxisName} — Hausarzt in ${d.plzOrt?.replace(/^\d+\s*/, '')}`}
+  beschreibung={t(d.seoBeschreibung)}
+  telefon={d.telefon}
+  strasse={d.strasse}
+  plzOrt={d.plzOrt}
+  daten={d}
+  lang="de"
+>
+  <Startseite daten={d} lang="de" />
+</Basis>

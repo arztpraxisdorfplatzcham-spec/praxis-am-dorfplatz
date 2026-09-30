@@ -1,0 +1,138 @@
+@import 'tailwindcss';
+
+/* Schriften lokal, nicht von Google-Servern. Anforderung aus dem Briefing
+   (Schweizer/EU-Hosting, keine Aufrufe zu Dritten) — damit entfaellt auch
+   die datenschutzrechtliche Frage zu Google Fonts. */
+@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/dm-sans';
+@import '@fontsource-variable/inter';
+
+@theme {
+  /* ---------------------------------------------------------- Farben */
+  --color-brand: #10584b;
+  --color-brand-light: #1a7565;
+  --color-brand-dark: #0a3d34;
+  --color-medical-green: #10584b;
+  --color-primary: #003f35;
+  --color-primary-fixed: #aef0de;
+  --color-primary-fixed-dim: #92d3c2;
+  --color-page-cream: #faf9f5;
+  --color-border-tan: #e4e2da;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f2f4f2;
+  --color-surface-container: #eceeec;
+  --color-surface-dim: #d8dbd8;
+  --color-on-surface: #191c1b;
+  --color-on-surface-variant: #3f4946;
+
+  /* -------------------------------------------------------- Schriften */
+  --font-serif: 'Fraunces Variable', Georgia, serif;
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --font-body-lg: 'DM Sans Variable', system-ui, sans-serif;
+  --font-display-lg: 'Fraunces Variable', Georgia, serif;
+
+  /* ------------------------------------------------------------ Groessen */
+  --text-display-lg: 52px;
+  --text-display-lg--line-height: 1.12;
+  --text-display-lg--letter-spacing: -0.015em;
+  --text-display-lg-mobile: 38px;
+  --text-display-lg-mobile--line-height: 1.12;
+  --text-body-lg: 18px;
+  --text-body-lg--line-height: 1.55;
+}
+
+/* Weiche Fraunces-Achse fuer alle Ueberschriften */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-serif {
+  font-variation-settings: 'SOFT' 100;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+section[id] {
+  scroll-margin-top: 96px;
+}
+
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* ------------------------------------------------------------------
+   RHYTHMUS-SYSTEM
+   Ein Container und eine vertikale Skala fuer alle Sektionen.
+   ------------------------------------------------------------------ */
+.band {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+@media (min-width: 768px) {
+  .band {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+.band--tight {
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+}
+@media (min-width: 768px) {
+  .band--tight {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+}
+.shell {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+@media (min-width: 640px) {
+  .shell {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .shell {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Kleine Uebertitel — Vorbild omp.dentist, gesetzt in der Titelschrift */
+.eyebrow {
+  font-family: var(--font-serif);
+  font-variation-settings: 'SOFT' 100;
+  font-size: 16px;
+  line-height: 1.4;
+  letter-spacing: 0;
+  font-weight: 400;
+  text-transform: none;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1px;
+}
+
+/* Ausklappbarer Text — Verhalten nach dem Vorbild von omp.dentist */
+.expandable__content {
+  overflow: hidden;
+  transition: height 700ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .expandable__content {
+    transition: none;
+  }
+}

@@ -1,0 +1,24 @@
+# Bau-Einstellungen fuer Netlify.
+#
+# Die Datei liegt im Ordner "web", weil dieser als Basisverzeichnis des
+# Projekts eingetragen ist. Alle Pfade sind deshalb relativ zu "web".
+#
+# Die Node-Version ist festgeschrieben: package.json verlangt mindestens
+# 22.12, und Netlify nimmt sonst eine aeltere Voreinstellung.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+  # Netlify durchsucht das Bauergebnis nach den Werten der Umgebungsvariablen
+  # und bricht ab, wenn es welche findet. Projekt-ID, Datensatz und
+  # API-Version sind keine Geheimnisse: die Projekt-ID steht zwangslaeufig in
+  # jeder Bild-Adresse (cdn.sanity.io/images/<projekt>/...). Nur
+  # SANITY_READ_TOKEN ist geheim und wird weiterhin geprueft.
+  SECRETS_SCAN_OMIT_KEYS = "SANITY_PROJECT_ID,SANITY_DATASET,SANITY_API_VERSION"
+
+# Die Startseite wird beim Bauen erzeugt; Astro legt Unterseiten als eigene
+# Ordner ab. Netlify liefert 404.html automatisch aus.

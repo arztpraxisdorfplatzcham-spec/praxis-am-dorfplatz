@@ -1,0 +1,81 @@
+---
+import '../styles/global.css'
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+import type {Lang} from '../lib/sanity'
+
+interface Props {
+  titel: string
+  beschreibung?: string
+  telefon: string
+  strasse?: string
+  plzOrt?: string
+  daten?: any
+  /** '/' auf Unterseiten, damit Anker auf die Startseite zeigen. */
+  basis?: string
+  lang?: Lang
+}
+const {titel, beschreibung, telefon, strasse, plzOrt, daten, basis = '', lang = 'de'} = Astro.props
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{titel}</title>
+    {beschreibung && <meta name="description" content={beschreibung} />}
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+    <meta name="theme-color" content="#10584b" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Arztpraxis am Dorfplatz" />
+    <meta property="og:locale" content="de_CH" />
+    <meta property="og:title" content={titel} />
+    {beschreibung && <meta property="og:description" content={beschreibung} />}
+    <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:image" content={new URL('/og-image.png', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="1200" />
+    <meta property="og:image:alt" content="Arztpraxis am Dorfplatz – Hausärztliche Grundversorgung in Cham" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={titel} />
+    {beschreibung && <meta name="twitter:description" content={beschreibung} />}
+    <meta name="twitter:image" content={new URL('/og-image.png', Astro.site)} />
+  </head>
+  <body
+    class="bg-surface-container-lowest text-on-surface font-body-lg antialiased flex flex-col min-h-screen"
+  >
+    <Header
+      telefon={telefon}
+      strasse={strasse}
+      plzOrt={plzOrt}
+      praxisName={daten?.praxisName}
+      navigation={daten?.navigation}
+      kontaktLabel={daten?.kontaktLabel}
+      basis={basis}
+      lang={lang}
+    />
+    <main class="flex-grow">
+      <slot />
+    </main>
+    <Footer
+      telefon={telefon}
+      strasse={strasse}
+      plzOrt={plzOrt}
+      praxisName={daten?.praxisName}
+      navigation={daten?.navigation}
+      spaltePraxis={daten?.footerPraxis}
+      spalteRechtliches={daten?.footerRechtliches}
+      linkImpressum={daten?.footerImpressum}
+      linkDatenschutz={daten?.footerDatenschutz}
+      basis={basis}
+      lang={lang}
+    />
+  </body>
+</html>

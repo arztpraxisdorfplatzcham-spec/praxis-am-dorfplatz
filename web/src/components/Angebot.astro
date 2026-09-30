@@ -1,0 +1,71 @@
+---
+import {telHref, t} from '../lib/sanity'
+import type {AngebotGruppe, Lang} from '../lib/sanity'
+
+interface Props {
+  telefon: string
+  titel: string
+  einleitung: string
+  gruppen: AngebotGruppe[]
+  lang?: Lang
+}
+const {telefon, titel, einleitung, gruppen, lang = 'de'} = Astro.props
+---
+
+<section class="band bg-page-cream" id="angebot">
+  <div class="shell">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
+      <div class="lg:col-span-2">
+        <h2 class="text-brand font-serif text-4xl md:text-5xl mb-6">{titel}</h2>
+        <p class="text-gray-600 font-sans leading-relaxed mb-8">{einleitung}</p>
+        <a
+          class="inline-block bg-brand text-white px-8 py-3 rounded-full font-medium hover:bg-brand-dark transition-colors"
+          href={`tel:${telHref(telefon)}`}>{telefon}</a
+        >
+      </div>
+
+      <!-- Aufklappbare Liste wie im Entwurf. <details> statt eigenem JavaScript:
+           funktioniert ohne Skript, ist mit der Tastatur bedienbar, und
+           Suchmaschinen lesen den eingeklappten Text trotzdem. -->
+      <div class="lg:col-span-3">
+        <div class="space-y-0">
+          {
+            gruppen.map((g) => (
+              <details class="group border-b border-border-tan">
+                <summary class="flex justify-between items-center py-5 cursor-pointer list-none">
+                  <span class="font-serif text-xl text-brand">{t(g.titel, lang)}</span>
+                  <span class="text-brand text-2xl group-open:hidden" aria-hidden="true">
+                    +
+                  </span>
+                  <span class="text-brand text-2xl hidden group-open:block" aria-hidden="true">
+                    −
+                  </span>
+                </summary>
+                <div class="pb-6 text-gray-600 font-sans">
+                  {/* Ein einzelner Eintrag steht als Fliesstext — eine Liste mit
+                      genau einem Punkt sieht nach einem Fehler aus. */}
+                  {g.punkte?.length === 1 ? (
+                    <p>{t(g.punkte[0], lang)}</p>
+                  ) : (
+                    <ul class="list-disc pl-5 space-y-2">
+                      {g.punkte?.map((p) => (
+                        <li>{t(p, lang)}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Safari zeigt sonst das eigene Dreieck zusaetzlich zum Plus-Zeichen. */
+  summary::-webkit-details-marker {
+    display: none;
+  }
+</style>

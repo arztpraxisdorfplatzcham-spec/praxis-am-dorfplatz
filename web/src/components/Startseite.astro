@@ -1,0 +1,503 @@
+---
+import Angebot from './Angebot.astro'
+import Fliesstext from './Fliesstext.astro'
+import {t, telHref, datumLang, bildUrl, bildBreite, zeilen} from '../lib/sanity'
+import type {Lang, PraxisDaten} from '../lib/sanity'
+
+interface Props {
+  daten: PraxisDaten
+  lang?: Lang
+}
+const {daten: d, lang = 'de'} = Astro.props
+const tel = telHref(d.telefon)
+
+// Nur kuenftige Ferien zeigen — vergangene Eintraege verschwinden von selbst.
+const heute = new Date().toISOString().slice(0, 10)
+const ferien = (d.betriebsferien ?? []).filter((f) => f.bis >= heute)
+
+const arztPortrait = bildUrl(d.arztPortrait, 1024)
+---
+
+<!-- ============================================================ 1 — HERO -->
+<section class="band bg-page-cream">
+  <div class="shell flex flex-col items-center text-center">
+    {t(d.heroEyebrow, lang) && <p class="eyebrow text-brand mb-4">{t(d.heroEyebrow, lang)}</p>}
+    <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-medical-green mb-6 max-w-3xl">
+      {zeilen(t(d.heroTitel, lang)).map((z, i) => (<Fragment>{i > 0 && (<>{' '}<br class="hidden md:block" /></>)}{z}</Fragment>))}
+    </h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl lg:max-w-[60rem] mb-14">
+      {t(d.heroText, lang)}
+    </p>
+    <div class="w-full aspect-[16/9] md:aspect-[21/9] bg-surface-container-lowest rounded-[32px] overflow-hidden relative">
+      <img
+        alt={d.heroBild?.alt ?? 'Blick über den Zugersee auf Cham'}
+        class="w-full h-full object-cover object-center absolute inset-0"
+        src={bildBreite(d.heroBild, 2400) ?? '/images/zugersee-cham.jpg'}
+        srcset={
+          bildBreite(d.heroBild, 1200)
+            ? `${bildBreite(d.heroBild, 1200)} 1200w, ${bildBreite(d.heroBild, 2400)} 2400w`
+            : '/images/zugersee-cham-1200.jpg 1200w, /images/zugersee-cham.jpg 2400w'
+        }
+        sizes="(min-width: 1280px) 1216px, 100vw"
+        width="2400"
+        height="1600"
+        fetchpriority="high"
+      />
+    </div>
+  </div>
+</section>
+
+<!-- ================================================ 2 — ÜBERNAHME-HINWEIS -->
+{
+  d.uebernahmeAnzeigen && t(d.uebernahmeText, lang) && (
+    <section class="band--tight bg-surface-container-lowest" id="uebernahme">
+      <div class="shell">
+        <div class="max-w-3xl mx-auto text-center border-y border-border-tan py-10">
+          <p class="font-serif text-brand text-2xl md:text-3xl leading-snug">
+            {t(d.uebernahmeText, lang)}
+          </p>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<!-- ============================================ 3 — PATIENTENBRIEF -->
+<section class="band bg-primary">
+  <div class="shell">
+    <div class="max-w-3xl mx-auto">
+      <p class="eyebrow text-primary-fixed-dim mb-6 text-center">{d.arztName}</p>
+      <h2 class="text-white font-serif text-3xl md:text-4xl lg:text-5xl mb-10 leading-tight text-center">
+        {zeilen(t(d.briefTitel, lang)).map((z, i) => (<Fragment>{i > 0 && (<>{' '}<br class="hidden md:block" /></>)}{z}</Fragment>))}
+      </h2>
+
+      <div data-expandable>
+        <div class="text-white/85 font-sans leading-relaxed text-lg md:text-xl">
+          <p>{t(d.briefEinleitung, lang)}</p>
+        </div>
+
+        <div class="expandable__content" id="patientenbrief-mehr">
+          <div class="pt-6 space-y-6 text-white/85 font-sans leading-relaxed text-lg md:text-xl">
+            {d.briefAbsaetze?.map((absatz) => (
+              <p>
+                <Fliesstext text={t(absatz, lang)} />
+              </p>
+            ))}
+            <p class="font-serif text-white/70 text-xl">— {d.arztName}</p>
+          </div>
+        </div>
+
+        <div class="text-center pt-10">
+          <button
+            class="hidden bg-white text-primary rounded-full px-7 py-3.5 uppercase tracking-[0.08em] text-sm font-semibold hover:bg-primary-fixed transition-colors"
+            type="button"
+            aria-controls="patientenbrief-mehr"
+            aria-expanded="true"
+            data-expandable-toggle
+            data-label-more={t(d.mehrLabel, lang)}
+            data-label-less={t(d.wenigerLabel, lang)}>{t(d.mehrLabel, lang)}</button
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================ 4 — LEITUNG + TEAM -->
+<section class="band bg-surface-container-lowest" id="team">
+  <div class="shell">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
+      <div>
+        <div class="aspect-square max-w-lg bg-surface-container-low mb-6 rounded-[32px] overflow-hidden flex items-center justify-center">
+          {
+            arztPortrait ? (
+              <img
+                src={arztPortrait}
+                alt={d.arztPortrait?.alt || d.arztName}
+                width="512"
+                height="512"
+                loading="lazy"
+                class="w-full h-full object-cover"
+              />
+            ) : (
+              <span class="font-sans text-[11px] uppercase tracking-[0.12em] text-on-surface-variant/60 text-center leading-loose">
+                Porträt
+                <br />
+                {d.arztName}
+                <br />
+                1:1
+              </span>
+            )
+          }
+        </div>
+        <h3 class="font-serif text-3xl text-brand mb-2">{d.arztName}</h3>
+        <p class="font-sans text-sm font-semibold text-on-surface mb-4">{t(d.arztTitel, lang)}</p>
+        <p class="font-sans text-gray-600 leading-relaxed mb-4">{t(d.arztBio, lang)}</p>
+        {
+          t(d.arztSprachen, lang) && (
+            <p class="font-sans text-gray-600">
+              <span class="font-semibold text-on-surface">{t(d.sprachenLabel, lang)}</span> {t(d.arztSprachen, lang)}
+            </p>
+          )
+        }
+      </div>
+
+      <div>
+        <p class="eyebrow text-on-surface-variant/70 mb-5">{t(d.teamLabel, lang)}</p>
+        <h3 class="font-serif text-3xl md:text-4xl text-brand mb-8 leading-tight">
+          {zeilen(t(d.teamTitel, lang)).map((z, i) => (<Fragment>{i > 0 && (<>{' '}<br class="hidden md:block" /></>)}{z}</Fragment>))}
+        </h3>
+        <ul class="space-y-6 sm:space-y-8">
+          {
+            /* Ohne Porträt keine leere Flaeche: der Eintrag rueckt stattdessen
+               um Bildbreite plus Abstand ein, damit die Namen buendig bleiben. */
+            d.team?.map((person) => (
+              <li
+                class={
+                  bildUrl(person.portrait, 352)
+                    ? 'flex items-center gap-6 sm:gap-8'
+                    : 'flex items-center pl-[152px] sm:pl-[208px]'
+                }
+              >
+                {bildUrl(person.portrait, 352) && (
+                  <div class="w-32 h-32 sm:w-44 sm:h-44 shrink-0 bg-surface-container-low rounded-[24px] overflow-hidden">
+                    <img
+                      src={bildUrl(person.portrait, 352)}
+                      alt={person.portrait?.alt || person.name}
+                      width="176"
+                      height="176"
+                      loading="lazy"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div>
+                  <h4 class="font-serif text-xl sm:text-2xl text-brand leading-snug">
+                    {person.name}
+                  </h4>
+                  <p class="font-sans text-base text-gray-600 mt-1">{t(person.funktion, lang)}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<Angebot
+  telefon={d.telefon}
+  titel={t(d.angebotTitel, lang)}
+  einleitung={t(d.angebotEinleitung, lang)}
+  gruppen={d.angebotGruppen ?? []}
+  lang={lang}
+/>
+
+<!-- ================================================== 6 — SPRECHZEITEN -->
+<section class="band bg-surface-container-lowest" id="sprechzeiten">
+  <div class="shell">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div class="order-2 md:order-1">
+        <div class="rounded-[32px] overflow-hidden aspect-[4/5]">
+          <img
+            alt={d.sprechzeitenBild?.alt ?? `Das Praxisteam der ${d.praxisName}`}
+            class="w-full h-full object-cover"
+            src={bildBreite(d.sprechzeitenBild, 1200) ?? '/images/praxisteam.jpg'}
+            width="1200"
+            height="1500"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+
+      <div class="order-1 md:order-2">
+        <h2 class="font-serif text-brand text-4xl md:text-5xl mb-6 leading-tight">
+          {zeilen(t(d.sprechzeitenTitel, lang)).map((z, i) => (<Fragment>{i > 0 && (<>{' '}<br class="hidden md:block" /></>)}{z}</Fragment>))}
+        </h2>
+        <div class="font-sans text-gray-700 leading-relaxed space-y-6">
+          <p>{t(d.sprechzeitenText, lang)} {t(d.absageregelung, lang)}</p>
+
+          <div class="pt-2">
+            <div class="bg-page-cream rounded-[20px] p-5">
+              <p class="eyebrow text-brand mb-3">{t(d.zeitenLabel, lang)}</p>
+              <dl class="text-base tabular-nums">
+                {
+                  d.oeffnungszeiten?.map((z) => (
+                    <div class="flex justify-between gap-4 py-1">
+                      <dt>{t(z.tag, lang)}</dt>
+                      <dd>{z.zeit}</dd>
+                    </div>
+                  ))
+                }
+              </dl>
+              {t(d.zeitenHinweis, lang) && <p class="text-sm text-gray-600 mt-3">{t(d.zeitenHinweis, lang)}</p>}
+            </div>
+          </div>
+
+          {t(d.sprechzeitenNeu, lang) && <p class="font-medium text-brand">{t(d.sprechzeitenNeu, lang)}</p>}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================ 7 — BETRIEBSFERIEN -->
+{
+  ferien.length > 0 && (
+    <section class="band--tight bg-page-cream" id="betriebsferien">
+      <div class="shell">
+        <div class="max-w-3xl">
+          <h2 class="font-serif text-brand text-3xl md:text-4xl mb-6 leading-tight">
+            {t(d.ferienTitel, lang)}
+          </h2>
+          <ul class="divide-y divide-border-tan border-y border-border-tan">
+            {ferien.map((f) => (
+              <li class="py-5">
+                <p class="font-sans text-lg text-gray-800">
+                  {datumLang(f.von)} bis {datumLang(f.bis)}
+                </p>
+                {t(f.hinweis, lang) && <p class="font-sans text-gray-600 mt-1">{t(f.hinweis, lang)}</p>}
+              </li>
+            ))}
+          </ul>
+          {t(d.ferienHinweis, lang) && (
+            <p class="font-sans text-gray-600 mt-6">{t(d.ferienHinweis, lang)}</p>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<!-- ===================================================== 8 — NOTFÄLLE -->
+<section class="band bg-surface-container-low" id="notfall">
+  <div class="shell">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
+      <div class="lg:col-span-2">
+        <h2 class="font-serif text-brand text-4xl md:text-5xl mb-6 leading-tight">
+          {zeilen(t(d.notfallTitel, lang)).map((z, i) => (<Fragment>{i > 0 && (<>{' '}<br class="hidden md:block" /></>)}{z}</Fragment>))}
+        </h2>
+        <p class="font-sans text-gray-700 leading-relaxed">{t(d.notfallText, lang)}</p>
+      </div>
+
+      <div class="lg:col-span-3">
+        <div class="bg-surface-container-lowest rounded-[24px] p-6 md:p-8 mb-8 flex items-center justify-between gap-6 flex-wrap">
+          <p class="font-sans text-gray-700 text-lg">{zeilen(t(d.notfallSofort, lang)).map((z, i) => (<Fragment>{i > 0 && (<>{' '}<br class="hidden sm:block" /></>)}{z}</Fragment>))}</p>
+          <a
+            class="font-serif text-brand text-5xl md:text-6xl leading-none hover:text-brand-light transition-colors"
+            href={`tel:${d.notrufNummer}`}>{d.notrufNummer}</a
+          >
+        </div>
+
+        <p class="eyebrow text-on-surface-variant/70 mb-5">{t(d.notfallListeLabel, lang)}</p>
+        <ul class="font-sans text-gray-700">
+          {
+            d.notfallnummern?.map((n) => (
+              <li class="flex justify-between items-center gap-4 border-b border-border-tan py-4">
+                <span>
+                  {n.name}
+                  <br />
+                  <span class="text-sm text-gray-600">{t(n.zusatz, lang)}</span>
+                </span>
+                <a
+                  class="font-medium text-brand whitespace-nowrap tabular-nums hover:text-brand-light transition-colors"
+                  href={`tel:${telHref(n.nummer)}`}
+                >
+                  {n.nummer}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================== 9 — TERMIN-CTA -->
+<section class="band--tight bg-surface-container-lowest">
+  <div class="shell">
+    <!-- Die beiden runden Bilder sind reine Zier: sie ragen ueber den Rand der
+         gruenen Karte hinaus und werden deshalb abgeschnitten. Fuer
+         Screenreader sind sie ausgeblendet. -->
+    <div
+      class="relative bg-primary rounded-[32px] overflow-hidden px-8 py-40 md:py-32 flex flex-col items-center justify-center text-center"
+    >
+      {
+        bildUrl(d.ctaBildLinks, 800) && (
+          <div class="absolute -bottom-12 -left-12 w-48 h-48 md:w-80 md:h-80 rounded-full overflow-hidden">
+            <img
+              alt=""
+              aria-hidden="true"
+              class="w-full h-full object-cover"
+              src={bildUrl(d.ctaBildLinks, 800)}
+              width="800"
+              height="800"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        )
+      }
+      {
+        bildUrl(d.ctaBildRechts, 800) && (
+          <div class="absolute -top-12 -right-12 w-48 h-48 md:w-80 md:h-80 rounded-full overflow-hidden">
+            <img
+              alt=""
+              aria-hidden="true"
+              class="w-full h-full object-cover"
+              src={bildUrl(d.ctaBildRechts, 800)}
+              width="800"
+              height="800"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        )
+      }
+      <div class="relative z-10 max-w-2xl">
+        <h2 class="font-serif text-white text-3xl md:text-5xl mb-8 leading-tight">
+          {zeilen(t(d.ctaTitel, lang)).map((z, i) => (<Fragment>{i > 0 && (<>{' '}<br class="hidden md:block" /></>)}{z}</Fragment>))}
+        </h2>
+        <a
+          class="inline-block bg-white text-primary px-10 py-4 rounded-full font-medium text-lg hover:bg-primary-fixed transition-colors"
+          href={`tel:${tel}`}>{d.telefon}</a
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ 10 — KONTAKT & ANFAHRT -->
+<section class="band bg-page-cream" id="kontakt">
+  <div class="shell">
+    <h2 class="font-serif text-brand text-4xl md:text-5xl mb-12 leading-tight">
+      {t(d.kontaktTitel, lang)}
+    </h2>
+
+    <div class="grid md:grid-cols-2 gap-8 lg:gap-12 items-stretch">
+      <div class="bg-surface-container-lowest p-8 md:p-10 rounded-[32px] flex flex-col justify-center">
+        <h3 class="font-serif text-2xl text-brand mb-2">{d.praxisName}</h3>
+        <p class="font-sans text-base text-gray-700 mb-5">
+          {d.arztName}<br />{t(d.arztTitel, lang)}
+        </p>
+        <p class="font-sans text-gray-700 mb-5">{d.strasse}<br />{d.plzOrt}</p>
+        <a
+          class="font-serif text-3xl text-brand mb-5 hover:text-brand-light transition-colors"
+          href={`tel:${tel}`}>{d.telefon}</a
+        >
+        {
+          t(d.rollstuhlHinweis, lang) && (
+            <p class="font-sans text-base text-gray-700 mb-5">{t(d.rollstuhlHinweis, lang)}</p>
+          )
+        }
+        {
+          t(d.terminHinweis, lang) && (
+            <p class="font-sans text-sm text-gray-600 leading-relaxed mb-8">
+              <Fliesstext text={t(d.terminHinweis, lang)} />
+            </p>
+          )
+        }
+        {
+          d.hinMail && (
+            <div class="border-t border-border-tan pt-6">
+              <p class="font-sans text-sm mb-2">
+                <span class="font-semibold">{t(d.mailLabel, lang)}</span> {d.hinMail}
+              </p>
+              {t(d.hinHinweis, lang) && (
+                <p class="font-sans text-sm text-gray-600 italic">{t(d.hinHinweis, lang)}</p>
+              )}
+            </div>
+          )
+        }
+      </div>
+
+      <!-- Karte als eigenes Bild: keine externen Aufrufe, kein Einwilligungsbanner.
+           Die Praxis liegt im Bildmittelpunkt, daher sitzt die Markierung bei 50/50. -->
+      <!-- Eingebettete Google-Karte, wie im Entwurf. Sie laedt erst, wenn sie in
+           die Naehe des Sichtbereichs kommt (loading="lazy"), damit die
+           Startseite oben schnell bleibt. Beim Laden erhaelt Google die
+           IP-Adresse der Besucherin — das ist in der Datenschutzerklaerung
+           ausdruecklich beschrieben. Der Knopf darunter oeffnet zusaetzlich
+           die Routenplanung in einem neuen Tab. -->
+      <div class="min-h-[400px] bg-surface-dim rounded-[32px] overflow-hidden relative">
+        <iframe
+          title={`Karte: ${d.praxisName}, ${d.strasse}, ${d.plzOrt}`}
+          class="absolute inset-0 w-full h-full border-0"
+          src={`https://www.google.com/maps?q=${encodeURIComponent(`${d.strasse}, ${d.plzOrt}, Schweiz`)}&hl=de&z=16&output=embed`}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen></iframe>
+        <a
+          class="absolute bottom-5 left-5 z-10 inline-flex items-center gap-2 bg-white text-brand shadow-md rounded-full px-6 py-3 text-base font-medium hover:bg-primary-fixed transition-colors"
+          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${d.praxisName}, ${d.strasse}, ${d.plzOrt}`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"
+            ><path
+              d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"></path></svg
+          >
+          {t(d.karteKnopf, lang)}
+        </a>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8 lg:gap-12 mt-12 lg:mt-16 pt-12 border-t border-border-tan">
+      {
+        d.anfahrt?.map((a) => (
+          <div>
+            <h3 class="font-serif text-2xl text-brand mb-3">{t(a.titel, lang)}</h3>
+            <p class="font-sans text-gray-700 leading-relaxed">
+              <Fliesstext text={t(a.text, lang)} />
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  // Ausklappbarer Text (Vorbild omp.dentist). Der Text steht im Markup
+  // vollstaendig da und wird erst hier eingeklappt — ohne JavaScript bleibt er
+  // lesbar, und Suchmaschinen sehen ihn immer.
+  const DAUER = 700
+
+  document.querySelectorAll<HTMLElement>('[data-expandable]').forEach((root) => {
+    const content = root.querySelector<HTMLElement>('.expandable__content')
+    const toggle = root.querySelector<HTMLButtonElement>('[data-expandable-toggle]')
+    if (!content || !toggle) return
+
+    let offen = false
+    let laeuft = false
+
+    content.style.height = '0px'
+    toggle.classList.remove('hidden')
+    toggle.setAttribute('aria-expanded', 'false')
+    toggle.textContent = toggle.dataset.labelMore ?? 'Mehr'
+
+    toggle.addEventListener('click', () => {
+      if (laeuft) return
+      laeuft = true
+      offen = !offen
+
+      content.style.height = offen ? '0px' : `${content.scrollHeight}px`
+      void content.offsetHeight // Reflow erzwingen
+      content.style.height = offen ? `${content.scrollHeight}px` : '0px'
+
+      toggle.setAttribute('aria-expanded', String(offen))
+      toggle.textContent = (offen ? toggle.dataset.labelLess : toggle.dataset.labelMore) ?? ''
+
+      window.setTimeout(() => {
+        laeuft = false
+        content.style.height = offen ? 'auto' : '0px'
+      }, DAUER)
+    })
+  })
+</script>

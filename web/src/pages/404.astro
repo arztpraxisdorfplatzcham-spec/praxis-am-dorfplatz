@@ -1,0 +1,62 @@
+---
+import Basis from '../layouts/Basis.astro'
+import Fliesstext from '../components/Fliesstext.astro'
+import {ladePraxisDaten, t, telHref} from '../lib/sanity'
+
+const d = await ladePraxisDaten()
+const tel = telHref(d.telefon)
+---
+
+<Basis
+  titel={`Seite nicht gefunden — ${d.praxisName.replace('|', ' ')}`}
+  telefon={d.telefon}
+  strasse={d.strasse}
+  plzOrt={d.plzOrt}
+  daten={d}
+  basis="/"
+>
+  <section class="band bg-page-cream">
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="font-serif text-brand/40 text-6xl md:text-7xl mb-6">404</p>
+        <h1 class="font-serif text-brand text-4xl md:text-5xl mb-6 leading-tight">
+          {t(d.fehlerTitel)}
+        </h1>
+        <p class="font-sans text-gray-700 leading-relaxed text-lg md:text-xl mb-4">
+          {t(d.fehlerText)}
+        </p>
+
+        <ul
+          class="font-sans text-lg mt-10 mb-12 divide-y divide-border-tan border-y border-border-tan"
+        >
+          {
+            d.fehlerLinks?.map((link) => (
+              <li>
+                <a
+                  class="flex items-center justify-between gap-4 py-5 text-brand hover:text-brand-light transition-colors"
+                  href={link.ziel}
+                >
+                  <span>{t(link.titel)}</span>
+                  <span aria-hidden="true">&rarr;</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="bg-surface-container-lowest rounded-[32px] p-8 md:p-10">
+          <h2 class="font-serif text-brand text-2xl mb-3">{t(d.fehlerTelefonTitel)}</h2>
+          <p class="font-sans text-gray-700 leading-relaxed mb-6">{t(d.fehlerTelefonText)}</p>
+          <a
+            class="inline-block bg-brand text-white px-8 py-4 rounded-full font-medium text-lg hover:bg-brand-dark transition-colors"
+            href={`tel:${tel}`}>{d.telefon}</a
+          >
+        </div>
+
+        <p class="font-sans text-gray-700 leading-relaxed mt-10">
+          <Fliesstext text={t(d.fehlerNotfallText)} telefonnummern />
+        </p>
+      </div>
+    </div>
+  </section>
+</Basis>

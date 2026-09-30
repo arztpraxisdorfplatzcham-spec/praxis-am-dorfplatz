@@ -1,0 +1,83 @@
+---
+import Basis from '../layouts/Basis.astro'
+import {ladePraxisDaten, telHref} from '../lib/sanity'
+
+const d = await ladePraxisDaten()
+---
+
+<Basis titel={`Impressum — ${d.praxisName.replace("|", " ")}`} telefon={d.telefon} basis="/"
+  daten={d}>
+<section class="band bg-page-cream">
+<div class="shell">
+<div class="max-w-3xl">
+
+<h1 class="font-serif text-brand text-4xl md:text-5xl mb-4 leading-tight">Impressum</h1>
+<p class="font-sans text-gray-600 mb-10">Angaben gemäss den Informationspflichten des schweizerischen Rechts.</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Verantwortlich für diese Website</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Arztpraxis am Dorfplatz<br/>
+{d.arztName}<br/>
+{d.strasse}<br/>
+{d.plzOrt}<br/>
+Telefon <a class="text-brand hover:text-brand-light" href={`tel:${telHref(d.telefon)}`}>{d.telefon}</a>
+</p>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Für vertrauliche medizinische Anliegen: <span class="font-semibold">{d.hinMail}</span> (HIN-verschlüsselt).
+Bitte senden Sie keine medizinischen Angaben über gewöhnliche E-Mail.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Rechtsform und Register</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Rechtsform: Einzelunternehmen (Einzelfirma)<br/>
+ZSR-Nummer: A531709<br/>
+GLN: 7601003862737
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Berufsbezeichnung und berufsrechtliche Regelungen</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Berufsbezeichnung: Fachärztin für Allgemeine Innere Medizin, verliehen in der Schweiz.<br/>
+Es gelten das Bundesgesetz über die universitären Medizinalberufe (MedBG), das
+Gesundheitsgesetz des Kantons Zug sowie die Standesordnung der FMH.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Aufsichtsbehörde</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Gesundheitsdirektion des Kantons Zug<br/>
+Neugasse 2, 6300 Zug
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Hosting</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Diese Website wird bei der Netlify, Inc., 512 2nd Street, San Francisco, USA, betrieben.
+Die Bilder werden über das Auslieferungsnetz (CDN) des Content-Management-Systems Sanity
+(Sanity Inc., USA) bereitgestellt.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Haftung für Inhalte</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Die Inhalte dieser Website werden mit grösster Sorgfalt erstellt und laufend gepflegt.
+Sie dienen der allgemeinen Information über die Praxis und ersetzen in keinem Fall eine
+ärztliche Beratung, Untersuchung oder Diagnose. Bei gesundheitlichen Beschwerden wenden Sie
+sich bitte an die Praxis oder – in dringenden Fällen – an die auf der Startseite genannten Notfallnummern.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Haftung für Links</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Diese Website enthält Verweise auf Websites Dritter, etwa auf Kliniken, Spitäler und
+Kartendienste. Auf deren Inhalte und Datenbearbeitung haben wir keinen Einfluss; eine Haftung
+dafür wird ausgeschlossen. Beim Aufruf eines solchen Links gelten die Bestimmungen der
+jeweiligen Anbieterin.
+</p>
+
+<h2 class="font-serif text-brand text-2xl md:text-3xl mt-12 mb-4 leading-tight">Urheberrecht</h2>
+<p class="font-sans text-gray-700 leading-relaxed mb-4">
+Texte, Bilder und Gestaltung dieser Website sind urheberrechtlich geschützt.
+</p>
+
+<p class="font-sans text-sm text-gray-600 mt-12 pt-6 border-t border-border-tan">Stand: 30.09.2026</p>
+
+</div>
+</div>
+</section>
+</Basis>

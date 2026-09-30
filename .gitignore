@@ -1,0 +1,22 @@
+# Nur Code gehoert in dieses Repository (Weissliste).
+# Alles andere im Projektordner (Fotos, Rechnungen, Notizen, Entwuerfe) bleibt draussen.
+/*
+!/.gitignore
+!/README.md
+!/web/
+!/sanity/
+
+# Abhaengigkeiten, Build-Ausgabe, Laufzeitdateien
+node_modules/
+dist/
+.astro/
+.netlify/
+sanity/.sanity/
+
+# Zugangsdaten
+.env
+.env.*
+!.env.example
+
+# System
+.DS_Store

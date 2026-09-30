@@ -1,0 +1,177 @@
+---
+import {telHref, t} from '../lib/sanity'
+import type {Lang, Localized, Menuepunkt} from '../lib/sanity'
+
+interface Props {
+  telefon: string
+  strasse?: string
+  plzOrt?: string
+  praxisName?: string
+  navigation?: Menuepunkt[]
+  kontaktLabel?: Localized
+  /** Auf Unterseiten muessen die Anker auf die Startseite zeigen. */
+  basis?: string
+  lang?: Lang
+}
+const {
+  telefon,
+  strasse = 'Dorfplatz 2',
+  plzOrt = '6330 Cham',
+  praxisName = 'Arztpraxis am Dorfplatz',
+  navigation = [],
+  kontaktLabel,
+  basis = '',
+  lang = 'de',
+} = Astro.props
+const kontaktFallback = lang === 'ru' ? 'Контакты' : 'Kontakt'
+// Der Name steht im Zeichen zweizeilig; ein senkrechter Strich trennt die Zeilen.
+const namensZeilen = praxisName.includes('|')
+  ? praxisName.split('|').map((z) => z.trim())
+  : praxisName.split(/\s+(?=am\s)/)
+const ort = plzOrt.replace(/^\d+\s*/, '')
+const tel = telHref(telefon)
+---
+
+<!-- Kernangaben auf allen Bildschirmgroessen sichtbar -->
+<div class="bg-white border-b border-border-tan">
+  <div
+    class="shell flex justify-between md:justify-end items-center gap-4 py-2.5 text-sm md:text-base text-gray-700"
+  >
+    <a class="flex items-center font-medium hover:text-brand transition-colors" href={`tel:${tel}`}>
+      <svg class="w-4 h-4 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        ><path
+          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"></path></svg
+      >{telefon}
+    </a>
+    <span class="flex items-center md:ml-6">
+      <svg class="w-4 h-4 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        ><path
+          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"></path><path
+          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"></path></svg
+      >
+      <span class="hidden sm:inline">{strasse}, {plzOrt}</span>
+      <span class="sm:hidden">{strasse}, {ort}</span>
+    </span>
+    <a class="hidden md:inline md:ml-6 hover:text-brand transition-colors" href={`${basis}#kontakt`}
+      >{t(kontaktLabel, lang) || kontaktFallback}</a
+    >
+  </div>
+</div>
+
+<header class="sticky top-0 z-50 bg-white border-b border-border-tan">
+  <div class="shell py-4 flex justify-between items-center gap-4">
+    <a class="flex items-center gap-2 sm:gap-3 text-brand shrink-0" href={basis || '/'}>
+      <img src="/logo.svg" alt="" width="46" height="46" class="w-10 h-10 sm:w-[46px] sm:h-[46px] shrink-0" />
+      <span class="flex flex-col items-start">
+        {namensZeilen.map((zeile) => <span class="font-serif text-xl leading-tight">{zeile}</span>)}
+      </span>
+    </a>
+
+    <nav class="hidden lg:flex space-x-8 text-gray-700 font-medium text-base">
+      {
+        navigation.map((punkt) => (
+          <a class="hover:text-brand transition-colors" href={`${basis}${punkt.anker}`}>
+            {t(punkt.titel, lang)}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-2 sm:gap-4">
+      <!-- Sprachumschalter (Entscheid D5). Unter sm hat die Nummer Vorrang. -->
+      <div class="hidden sm:flex items-center text-sm font-medium text-gray-600">
+        <a
+          class={`px-1.5 py-1 transition-colors ${lang === 'de' ? 'text-brand font-semibold' : 'hover:text-brand'}`}
+          href="/"
+          aria-current={lang === 'de' ? 'page' : undefined}
+          lang="de">DE</a
+        >
+        <span aria-hidden="true" class="text-border-tan">|</span>
+        <a
+          class={`px-1.5 py-1 transition-colors ${lang === 'ru' ? 'text-brand font-semibold' : 'hover:text-brand'}`}
+          href="/ru"
+          aria-current={lang === 'ru' ? 'page' : undefined}
+          lang="ru"
+          hreflang="ru">RU</a
+        >
+      </div>
+
+      <!-- Telefon bleibt auch angeheftet sichtbar (D2). Bis zur OneDoc-Anbindung
+           fuehrt der Knopf auf tel:, nicht auf eine Buchung (D4). -->
+      <a
+        class="inline-block bg-brand text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-full font-medium hover:bg-brand-dark transition-colors text-sm sm:text-base whitespace-nowrap"
+        href={`tel:${tel}`}>{telefon}</a
+      >
+
+      <button
+        class="lg:hidden p-2 -mr-2 text-brand"
+        aria-label="Menü öffnen"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-menu-toggle
+      >
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          ><path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round" stroke-width="2"></path></svg
+        >
+      </button>
+    </div>
+  </div>
+
+  <nav class="hidden lg:hidden border-t border-border-tan bg-white" id="mobile-menu">
+    <div class="shell py-4 flex flex-col text-lg text-gray-700 font-medium">
+      {
+        navigation.map((punkt) => (
+          <a class="py-3 border-b border-border-tan hover:text-brand" href={`${basis}${punkt.anker}`}>
+            {t(punkt.titel, lang)}
+          </a>
+        ))
+      }
+      <div class="sm:hidden flex items-center gap-2 pt-5">
+        <a
+          class={`px-3 py-2 ${lang === 'de' ? 'text-brand font-semibold' : 'hover:text-brand'}`}
+          href="/"
+          aria-current={lang === 'de' ? 'page' : undefined}
+          lang="de">DE</a
+        >
+        <span aria-hidden="true" class="text-border-tan">|</span>
+        <a
+          class={`px-3 py-2 ${lang === 'ru' ? 'text-brand font-semibold' : 'hover:text-brand'}`}
+          href="/ru"
+          aria-current={lang === 'ru' ? 'page' : undefined}
+          lang="ru"
+          hreflang="ru">RU</a
+        >
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]')
+  const menu = document.getElementById('mobile-menu')
+
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      menu.classList.toggle('hidden', !open)
+      toggle.setAttribute('aria-expanded', String(open))
+      toggle.setAttribute('aria-label', open ? 'Menü schliessen' : 'Menü öffnen')
+    }
+
+    toggle.addEventListener('click', () => setOpen(menu.classList.contains('hidden')))
+    menu.addEventListener('click', (e) => {
+      if ((e.target as HTMLElement).closest('a')) setOpen(false)
+    })
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => {
+      if (e.matches) setOpen(false)
+    })
+  }
+</script>

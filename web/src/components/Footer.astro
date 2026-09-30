@@ -1,0 +1,87 @@
+---
+import {telHref, t} from '../lib/sanity'
+import type {Lang, Localized, Menuepunkt} from '../lib/sanity'
+
+interface Props {
+  telefon: string
+  strasse?: string
+  plzOrt?: string
+  praxisName?: string
+  navigation?: Menuepunkt[]
+  spaltePraxis?: Localized
+  spalteRechtliches?: Localized
+  linkImpressum?: Localized
+  linkDatenschutz?: Localized
+  basis?: string
+  lang?: Lang
+}
+const {
+  telefon,
+  strasse = 'Dorfplatz 2',
+  plzOrt = '6330 Cham',
+  praxisName = 'Arztpraxis am Dorfplatz',
+  navigation = [],
+  spaltePraxis,
+  spalteRechtliches,
+  linkImpressum,
+  linkDatenschutz,
+  basis = '',
+  lang = 'de',
+} = Astro.props
+const namensZeilen = praxisName.includes('|')
+  ? praxisName.split('|').map((z) => z.trim())
+  : praxisName.split(/\s+(?=am\s)/)
+const tel = telHref(telefon)
+const jahr = new Date().getFullYear()
+---
+
+<footer class="bg-primary text-white pt-20 pb-8">
+  <div class="shell">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-16">
+      <div class="lg:col-span-2">
+        <a class="flex items-center gap-3 text-white mb-6" href={basis || '/'}>
+          <img src="/logo-white.svg" alt="" width="56" height="56" class="w-14 h-14 shrink-0" />
+          <span class="flex flex-col items-start">
+            {namensZeilen.map((zeile) => <span class="font-serif text-2xl leading-tight">{zeile}</span>)}
+          </span>
+        </a>
+        <p class="text-white/80 text-base mb-2">{strasse}</p>
+        <p class="text-white/80 text-base mb-4">{plzOrt}</p>
+        <a class="text-white/80 text-base hover:text-white transition-colors" href={`tel:${tel}`}
+          >{telefon}</a
+        >
+      </div>
+
+      <div>
+        <h4 class="eyebrow text-primary-fixed-dim mb-6">{t(spaltePraxis, lang)}</h4>
+        <ul class="space-y-3 text-base text-white/80">
+          {
+            navigation.map((punkt) => (
+              <li>
+                <a class="hover:text-white transition-colors" href={`${basis}${punkt.anker}`}>
+                  {t(punkt.titel, lang)}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="eyebrow text-primary-fixed-dim mb-6">{t(spalteRechtliches, lang)}</h4>
+        <ul class="space-y-3 text-base text-white/80">
+          <li><a class="hover:text-white transition-colors" href="/impressum">{t(linkImpressum, lang)}</a></li>
+          <li>
+            <a class="hover:text-white transition-colors" href="/datenschutz"
+              >{t(linkDatenschutz, lang)}</a
+            >
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10 pt-6">
+      <p class="text-white/60 text-sm">© {jahr} {praxisName.replace("|", " ")}. Alle Rechte vorbehalten.</p>
+    </div>
+  </div>
+</footer>
